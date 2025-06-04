@@ -27,11 +27,14 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
 
-      - - name: SSH into EC2 and deploy container
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ec2_ssh_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-          docker stop myapp || true
-          docker rm myapp || true
-          docker run -d --name myapp -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-        EOF
+      - name: SSH into EC2 and deploy container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
