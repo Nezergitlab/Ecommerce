@@ -37,4 +37,4 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
             docker stop myapp || true
             docker rm myapp || true
-            docker run -d --name myapp -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            docker run -d --name myapp -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
